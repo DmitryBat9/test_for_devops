@@ -22,6 +22,11 @@ pipeline {
         )
     }
 
+    environment {
+        EFFECTIVE_TARGET_BRANCH = "${params.TARGET_BRANCH ?: 'master'}"
+        EFFECTIVE_PROJECT_DIR = "${params.PROJECT_DIR ?: 'C:/Users/Dmitry/JenkinsWork/task8-project'}"
+    }
+
     stages {
         stage('Checkout pipeline sources') {
             steps {
@@ -33,7 +38,7 @@ pipeline {
             steps {
                 bat(
                     label: 'Run Job_3 PowerShell script',
-                    script: 'powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "task8/scripts/job3_restore.ps1" -Branch "%TARGET_BRANCH%" -WorkDirectory "%PROJECT_DIR%"'
+                    script: 'powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "task8/scripts/job3_restore.ps1" -Branch "%EFFECTIVE_TARGET_BRANCH%" -WorkDirectory "%EFFECTIVE_PROJECT_DIR%"'
                 )
             }
         }

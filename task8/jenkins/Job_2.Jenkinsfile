@@ -22,6 +22,11 @@ pipeline {
         )
     }
 
+    environment {
+        EFFECTIVE_TARGET_BRANCH = "${params.TARGET_BRANCH ?: 'master'}"
+        EFFECTIVE_PROJECT_DIR = "${params.PROJECT_DIR ?: 'C:/Users/Dmitry/JenkinsWork/task8-project'}"
+    }
+
     stages {
         stage('Checkout pipeline sources') {
             steps {
@@ -33,7 +38,7 @@ pipeline {
             steps {
                 bat(
                     label: 'Run Job_2 PowerShell script',
-                    script: 'powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "task8/scripts/job2_delete.ps1" -WorkDirectory "%PROJECT_DIR%"'
+                    script: 'powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "task8/scripts/job2_delete.ps1" -WorkDirectory "%EFFECTIVE_PROJECT_DIR%"'
                 )
             }
         }
@@ -46,8 +51,8 @@ pipeline {
                 wait: true,
                 propagate: true,
                 parameters: [
-                    string(name: 'TARGET_BRANCH', value: params.TARGET_BRANCH),
-                    string(name: 'PROJECT_DIR', value: params.PROJECT_DIR)
+                    string(name: 'TARGET_BRANCH', value: env.EFFECTIVE_TARGET_BRANCH),
+                    string(name: 'PROJECT_DIR', value: env.EFFECTIVE_PROJECT_DIR)
                 ]
             )
         }
