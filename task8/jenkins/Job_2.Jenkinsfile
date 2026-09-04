@@ -48,8 +48,7 @@ pipeline {
         success {
             build(
                 job: 'Job_3',
-                wait: true,
-                propagate: true,
+                wait: false,
                 parameters: [
                     string(name: 'TARGET_BRANCH', value: env.EFFECTIVE_TARGET_BRANCH),
                     string(name: 'PROJECT_DIR', value: env.EFFECTIVE_PROJECT_DIR)
