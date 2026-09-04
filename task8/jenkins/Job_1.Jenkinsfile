@@ -27,6 +27,12 @@ pipeline {
         )
     }
 
+    environment {
+        EFFECTIVE_REPOSITORY_URL = "${params.REPOSITORY_URL ?: 'https://github.com/DmitryBat9/test_for_devops.git'}"
+        EFFECTIVE_TARGET_BRANCH = "${params.TARGET_BRANCH ?: 'master'}"
+        EFFECTIVE_PROJECT_DIR = "${params.PROJECT_DIR ?: 'C:/Users/Dmitry/JenkinsWork/task8-project'}"
+    }
+
     triggers {
         pollSCM('H/2 * * * *')
     }
@@ -42,7 +48,7 @@ pipeline {
             steps {
                 bat(
                     label: 'Run Job_1 PowerShell script',
-                    script: 'powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "task8/scripts/job1_checkout.ps1" -RepositoryUrl "%REPOSITORY_URL%" -Branch "%TARGET_BRANCH%" -WorkDirectory "%PROJECT_DIR%"'
+                    script: 'powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "task8/scripts/job1_checkout.ps1" -RepositoryUrl "%EFFECTIVE_REPOSITORY_URL%" -Branch "%EFFECTIVE_TARGET_BRANCH%" -WorkDirectory "%EFFECTIVE_PROJECT_DIR%"'
                 )
             }
         }
@@ -55,8 +61,8 @@ pipeline {
                 wait: true,
                 propagate: true,
                 parameters: [
-                    string(name: 'TARGET_BRANCH', value: params.TARGET_BRANCH),
-                    string(name: 'PROJECT_DIR', value: params.PROJECT_DIR)
+                    string(name: 'TARGET_BRANCH', value: env.EFFECTIVE_TARGET_BRANCH),
+                    string(name: 'PROJECT_DIR', value: env.EFFECTIVE_PROJECT_DIR)
                 ]
             )
         }
