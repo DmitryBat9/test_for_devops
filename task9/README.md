@@ -32,3 +32,18 @@ curl.exe -i -X POST -H "Test: Hello" http://127.0.0.1:8000/
 curl.exe -i -X POST -H "Test: Wrong" http://127.0.0.1:8000/
 curl.exe -i http://127.0.0.1:8000/health
 ```
+
+## Docker
+
+Образ собирается из каталога `task9`:
+
+```bash
+docker build --tag task9-app:1.0 .
+```
+
+Контейнер запускает приложение от непривилегированного пользователя `app`
+с UID `10001` и содержит утилиту `ping`, необходимую эндпоинту `/health`.
+
+```bash
+docker run --detach --name task9-app --publish 8000:8000 task9-app:1.0
+```
