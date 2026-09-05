@@ -47,3 +47,34 @@ docker build --tag task9-app:1.0 .
 ```bash
 docker run --detach --name task9-app --publish 8000:8000 task9-app:1.0
 ```
+
+## Docker Compose и мониторинг
+
+`compose.yaml` запускает три контейнера в общей сети `task9-monitoring`:
+
+- `app` — FastAPI-приложение и эндпоинт метрик `/metrics`;
+- `prometheus` — сбор метрик приложения каждые 10 секунд;
+- `alertmanager` — приём и отображение тревог от Prometheus.
+
+Перед первым запуском Compose нужно удалить одиночный контейнер с тем же именем:
+
+```bash
+sudo docker rm --force task9-app
+sudo docker compose up --detach --build
+sudo docker compose ps
+```
+
+Локальные адреса внутри Ubuntu:
+
+- приложение: `http://127.0.0.1:8000`;
+- метрики приложения: `http://127.0.0.1:8000/metrics`;
+- Prometheus: `http://127.0.0.1:9090`;
+- Alertmanager: `http://127.0.0.1:9093`.
+
+Настроены две тревоги:
+
+- `Task9AppDown` — Prometheus не может опросить приложение 30 секунд;
+- `Task9PingFailed` — `/health` зафиксировал неуспешный ping в течение 30 секунд.
+
+Внешний получатель уведомлений пока не задан, поэтому Alertmanager показывает
+тревоги в веб-интерфейсе, но не отправляет письма или сообщения.

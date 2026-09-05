@@ -5,14 +5,41 @@ import platform
 import subprocess
 from typing import Annotated
 
-from fastapi import FastAPI, Header, HTTPException, status
+from fastapi import FastAPI, Header, HTTPException, Request, Response, status
 from fastapi.responses import PlainTextResponse
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, generate_latest
 
 
 PING_ADDRESS = "77.88.8.8"
 PING_TIMEOUT_SECONDS = 2
 
 app = FastAPI(title="Task 9 service", version="1.0.0")
+
+HTTP_REQUESTS_TOTAL = Counter(
+    "task9_http_requests_total",
+    "Total number of HTTP requests handled by the Task 9 application.",
+    ["method", "path", "status_code"],
+)
+PING_HEALTH = Gauge(
+    "task9_ping_health",
+    "Whether 77.88.8.8 answered the latest ICMP ping (1 for success, 0 for failure).",
+)
+PING_HEALTH.set(float("nan"))
+
+
+@app.middleware("http")
+async def record_request_metric(request: Request, call_next):
+    """Count requests using route templates instead of arbitrary URL paths."""
+
+    response = await call_next(request)
+    route = request.scope.get("route")
+    path = getattr(route, "path", "unmatched")
+    HTTP_REQUESTS_TOTAL.labels(
+        method=request.method,
+        path=path,
+        status_code=str(response.status_code),
+    ).inc()
+    return response
 
 
 def build_ping_command() -> list[str]:
@@ -73,9 +100,18 @@ def health() -> PlainTextResponse:
     """Report whether 77.88.8.8 is reachable with ICMP ping."""
 
     if ping_target():
+        PING_HEALTH.set(1)
         return PlainTextResponse("OK", status_code=status.HTTP_200_OK)
 
+    PING_HEALTH.set(0)
     return PlainTextResponse(
         "Service Unavailable",
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
     )
+
+
+@app.get("/metrics", include_in_schema=False)
+def metrics() -> Response:
+    """Expose application metrics in the Prometheus text format."""
+
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)

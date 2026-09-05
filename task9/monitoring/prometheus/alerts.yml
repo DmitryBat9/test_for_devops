@@ -1,0 +1,20 @@
+groups:
+  - name: task9-application
+    rules:
+      - alert: Task9AppDown
+        expr: up{job="task9-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: Task 9 application is unavailable
+          description: Prometheus cannot scrape the Task 9 application for 30 seconds.
+
+      - alert: Task9PingFailed
+        expr: task9_ping_health == 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: Health-check ping failed
+          description: The latest ICMP ping to 77.88.8.8 was unsuccessful.
