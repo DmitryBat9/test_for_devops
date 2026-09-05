@@ -32,11 +32,3 @@ curl.exe -i -X POST -H "Test: Hello" http://127.0.0.1:8000/
 curl.exe -i -X POST -H "Test: Wrong" http://127.0.0.1:8000/
 curl.exe -i http://127.0.0.1:8000/health
 ```
-
-## Автоматические тесты
-
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-```
-
-В тестах результат ping подменяется, чтобы они одинаково работали с сетью и без неё.

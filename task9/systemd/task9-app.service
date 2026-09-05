@@ -1,0 +1,25 @@
+[Unit]
+Description=Task 9 FastAPI application
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=task9app
+Group=task9app
+WorkingDirectory=/opt/task9-app/repository/task9
+ExecStart=/opt/task9-app/venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target
