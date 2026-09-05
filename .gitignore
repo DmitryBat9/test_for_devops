@@ -1,3 +1,7 @@
 # Локальные заметки по выполнению тестового задания
 task8/LOCAL_NOTES.md
 task8/.test-workdir/
+
+# Локальное окружение и кэш Python для задания 9
+task9/.venv/
+task9/**/__pycache__/
