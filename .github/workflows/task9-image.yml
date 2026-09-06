@@ -1,0 +1,49 @@
+name: Build Task 9 container image
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - task9/app/**
+      - task9/Dockerfile
+      - task9/requirements.txt
+      - .github/workflows/task9-image.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./task9
+          file: ./task9/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/dmitrybat9/task9-app:1.0.0
+            ghcr.io/dmitrybat9/task9-app:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
