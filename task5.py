@@ -19,4 +19,6 @@ df2 = pd.DataFrame(d2)
 df3 = df1.fillna(df2)
 df3 = df3.astype(int)
 
-print(df3)
+
+if __name__ == "__main__":
+    print(df3)

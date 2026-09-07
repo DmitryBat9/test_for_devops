@@ -12,8 +12,7 @@ RUN apt-get update \
 
 COPY requirements.txt ./requirements.txt
 
-RUN python -m pip install --no-cache-dir --upgrade pip \
-    && python -m pip install --no-cache-dir --requirement requirements.txt
+RUN python -m pip install --no-cache-dir --requirement requirements.txt
 
 RUN groupadd --gid 10001 app \
     && useradd \

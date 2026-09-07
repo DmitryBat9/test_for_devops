@@ -9,10 +9,10 @@ from pwdlib import PasswordHash
 from pydantic import BaseModel
 
 
-SECRET_KEY = os.getenv(
-    "JWT_SECRET_KEY",
-    "development-secret-change-before-production-47d7f42c5de249aa",
-)
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise RuntimeError("Не задана переменная окружения JWT_SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

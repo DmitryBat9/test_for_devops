@@ -1,0 +1,60 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sContainerLimits
+metadata:
+  name: task9-container-limits
+spec:
+  enforcementAction: deny
+  match:
+    namespaces:
+      - task9
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    cpu: 300m
+    memory: 300Mi
+    exemptImages:
+      - docker.io/istio/proxyv2:*
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPReadOnlyRootFilesystem
+metadata:
+  name: task9-readonly-rootfs
+spec:
+  enforcementAction: deny
+  match:
+    namespaces:
+      - task9
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sPSPAllowedUsers
+metadata:
+  name: task9-allowed-users
+spec:
+  enforcementAction: deny
+  match:
+    namespaces:
+      - task9
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    exemptImages:
+      - docker.io/istio/proxyv2:*
+    runAsUser:
+      rule: MustRunAs
+      ranges:
+        - min: 10001
+          max: 10001
+    runAsGroup:
+      rule: MustRunAs
+      ranges:
+        - min: 10001
+          max: 10001
+    supplementalGroups:
+      rule: RunAsAny
+    fsGroup:
+      rule: RunAsAny

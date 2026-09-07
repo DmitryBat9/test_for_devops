@@ -1,0 +1,18 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: task9-egress-policy
+  namespace: task9
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: task9-app
+  egress:
+    - toEntities:
+        - cluster
+    - toCIDR:
+        - 77.88.8.8/32
+      icmps:
+        - fields:
+            - family: IPv4
+              type: 8

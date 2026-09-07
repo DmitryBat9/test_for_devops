@@ -1,6 +1,7 @@
-# Задание 9 — веб-сервис
+# Задание 9 — развёртывание веб-сервиса
 
-На текущем этапе реализована локальная версия приложения на FastAPI.
+В задании реализовано FastAPI-приложение и несколько способов его запуска:
+локально, как systemd-сервис, в Docker Compose и в Kubernetes.
 
 ## Эндпоинты
 
@@ -23,6 +24,12 @@ python -m venv .venv
 
 ```text
 http://127.0.0.1:8000/docs
+```
+
+Автоматические тесты запускаются из каталога `task9`:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
 ## Ручная проверка
@@ -78,3 +85,29 @@ sudo docker compose ps
 
 Внешний получатель уведомлений пока не задан, поэтому Alertmanager показывает
 тревоги в веб-интерфейсе, но не отправляет письма или сообщения.
+
+## Сеть и systemd
+
+В каталоге `network` лежат настройки Netplan и nftables для отдельного
+маршрутизатора. Внешняя сеть получает доступ только к явно разрешённым
+NodePort-портам. Файл `systemd/task9-app.service` используется для запуска
+приложения без Docker от отдельного пользователя `task9app`.
+
+## Kubernetes
+
+Манифесты находятся в `kubernetes/manifests`. Deployment запускает две реплики,
+задаёт requests/limits, проверки состояния и непривилегированный UID `10001`.
+
+```bash
+kubectl apply -f kubernetes/manifests/namespace.yaml
+kubectl apply -f kubernetes/manifests/deployment.yaml
+kubectl apply -f kubernetes/manifests/service.yaml
+kubectl apply -f kubernetes/manifests/ingress.yaml
+kubectl -n task9 rollout status deployment/task9-app
+kubectl -n task9 get pods -o wide
+```
+
+Скрипты в `kubernetes/scripts` подготавливают Ubuntu-узлы и устанавливают
+ingress-nginx. В итоговой конфигурации задания 10 внешний трафик идёт через
+Istio Ingress Gateway на NodePort `30081`; соответствующие политики находятся
+в каталоге `task10`.

@@ -1,0 +1,12 @@
+apiVersion: networking.istio.io/v1
+kind: Sidecar
+metadata:
+  name: default
+  namespace: task9
+spec:
+  egress:
+    - hosts:
+        - ./*
+        - istio-system/*
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY

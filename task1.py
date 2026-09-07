@@ -5,7 +5,7 @@ def format_text(text: str, width: int = 70) -> str:
     """Переносит текст по словам, не превышая заданную ширину строки."""
 
     if width <= 0:
-        raise ValueError("текст должен быть не пустым")
+        raise ValueError("ширина строки должна быть больше нуля")
 
     words = text.split()
 
@@ -40,7 +40,7 @@ def format_text(text: str, width: int = 70) -> str:
 
 
 if __name__ == "__main__":
-    input_text = input() # можно через stdin.read(), но тогда с прерыванием программы через Ctrl+Z -> Enter
+    input_text = input()
 
     try:
         print(format_text(input_text))

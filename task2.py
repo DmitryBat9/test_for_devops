@@ -1,17 +1,14 @@
 from itertools import combinations
 
 
-def lucky_ticket(digits: tuple[int, ...]): #наполняемый кортеж
+def lucky_ticket(digits: tuple[int, ...]) -> bool:
     """Проверяет, можно ли составить счастливый билет из шести цифр."""
 
     if len(digits) != 6:
         raise ValueError("Передаем ровно шесть цифр")
 
-    for digit in digits:
-        if digit < 0 or digit > 9:
-         raise ValueError(
-                "Элемент кортежа должен быть цифрой от 0 до 9"
-            )
+    if any(digit < 0 or digit > 9 for digit in digits):
+        raise ValueError("Элементы кортежа должны быть цифрами от 0 до 9")
 
     total_sum = sum(digits)
 

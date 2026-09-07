@@ -1,0 +1,37 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: task9-strict-mtls
+  namespace: task9
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: task9-deny-by-default
+  namespace: task9
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: task9-app
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: task9-allow-ingress
+  namespace: task9
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: task9-app
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/istio-ingress/sa/istio-ingressgateway
+      to:
+        - operation:
+            ports:
+              - "8000"

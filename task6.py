@@ -57,9 +57,11 @@ def read_user(user_id: int):
 
     return users[user_index]
 
+
 @app.get("/")
 def root():
-    return {"message": "Users API работает"}  # Для проверки работы
+    return {"message": "Users API работает"}
+
 
 @app.put("/users/{user_id}", response_model=User)
 def update_user(user_id: int, updated_user: User):

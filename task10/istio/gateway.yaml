@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: task9-gateway
+  namespace: task9
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - task9.local
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: task9-app
+  namespace: task9
+spec:
+  hosts:
+    - task9.local
+  gateways:
+    - task9-gateway
+  http:
+    - route:
+        - destination:
+            host: task9-app.task9.svc.cluster.local
+            port:
+              number: 80

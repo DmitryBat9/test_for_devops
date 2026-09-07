@@ -6,3 +6,7 @@ tests/
 systemd/
 README.md
 requirements-dev.txt
+kubernetes/
+monitoring/
+network/
+compose.yaml
